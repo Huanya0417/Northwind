@@ -35,5 +35,7 @@
         public string ShipPostalCode { get; set; }
 
         public string ShipCountry { get; set; }
+
+        public List<OrderDetailsDTO> orderDetails { get; set; }
     }
 }

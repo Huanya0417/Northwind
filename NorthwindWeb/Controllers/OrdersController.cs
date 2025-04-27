@@ -23,5 +23,23 @@ namespace NorthwindWeb.Controllers
 
             return View(ordersDTOs);
         }
+
+        [Route("[action]/{orderID}")]
+        public async Task<IActionResult> Detail(string orderID)
+        {
+            OrdersDTO ordersDTO = new OrdersDTO();
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:7145/");
+            HttpResponseMessage response = await client.GetAsync($"api/Orders/{orderID}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                ordersDTO = JsonConvert.DeserializeObject<OrdersDTO>(json);
+            }
+
+            return View(ordersDTO);
+        }
     }
 }

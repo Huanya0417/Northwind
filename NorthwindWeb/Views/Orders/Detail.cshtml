@@ -1,0 +1,79 @@
+﻿@using NorthwindViewModel
+
+@model OrdersDTO
+
+<style>
+    input {
+        width: 100%;
+    }
+</style>
+
+<br />
+<table class="table table-bordered">
+    <tr>
+        <td>OrderID：</td>
+        <td colspan="3"><input type="number" value="@Model.OrderID" disabled /></td>
+    </tr>
+    <tr>
+        <td>CustomerName：</td>
+        <td><input type="text" value="@Model.CustomerName" disabled /></td>
+        <td>EmployeeName：</td>
+        <td><input type="text" value="@Model.EmployeeName" disabled /></td>
+    </tr>
+    <tr>
+        <td>OrderDate：</td>
+        <td><input type="date" value="@(Model.OrderDate?.ToString("yyyy-MM-dd") ?? string.Empty)" disabled /></td>
+        <td>RequiredDate：</td>
+        <td><input type="date" value="@(Model.RequiredDate?.ToString("yyyy-MM-dd") ?? string.Empty)" disabled /></td>
+    </tr>
+    <tr>
+        <td colspan="4" align="center">Shipped</td>
+    </tr>
+    <tr>
+        <td>ShippedDate：</td>
+        <td><input type="date" value="@(Model.ShippedDate?.ToString("yyyy-MM-dd") ?? string.Empty)" disabled /></td>
+        <td>Freight：</td>
+        <td><input type="number" value="@Model.Freight" disabled /></td>
+    </tr>
+    <tr>
+        <td>ShipCompany：</td>
+        <td><input type="text" value="@Model.ShipCompany" disabled /></td>
+        <td>ShipName：</td>
+        <td><input type="text" value="@Model.ShipName" disabled /></td>
+    </tr>
+    <tr>
+        <td>ShipAddress：</td>
+        <td colspan="3"><input type="text" value="@Model.ShipAddress" disabled /></td>
+    </tr>
+    <tr>
+        <td>ShipCity：</td>
+        <td><input type="text" value="@Model.ShipCity" disabled /></td>
+        <td>ShipRegion：</td>
+        <td><input type="text" value="@Model.ShipRegion" disabled /></td>
+    </tr>
+    <tr>
+        <td>ShipPostalCode：</td>
+        <td><input type="text" value="@Model.ShipPostalCode" disabled /></td>
+        <td>ShipCountry：</td>
+        <td><input type="text" value="@Model.ShipCountry" disabled /></td>
+    </tr>
+    <tr>
+        <td colspan="4" align="center">Order Details</td>
+    </tr>
+    <tr>
+        <td>ProductName</td>
+        <td>UnitPrice</td>
+        <td>Quantity</td>
+        <td>Discount</td>
+    </tr>
+        @foreach (OrderDetailsDTO orderDetails in @Model.orderDetails)
+    {
+        <tr>
+            <td><input type="text" value="@orderDetails.ProductName" disabled /></td>
+            <td><input type="number" value="@orderDetails.UnitPrice" disabled /></td>
+            <td><input type="number" value="@orderDetails.Quantity" disabled /></td>
+            <td><input type="number" value="@orderDetails.Discount" disabled /></td>
+        </tr>
+        }
+</table>
+

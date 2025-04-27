@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NorthwindAPI.Models;
 using NorthwindViewModel;
+using static NuGet.Packaging.PackagingConstants;
 
 namespace NorthwindAPI.Controllers
 {
@@ -27,7 +28,11 @@ namespace NorthwindAPI.Controllers
         {
             List<OrdersDTO> ordersDTOs = new List<OrdersDTO>();
 
-            var queryData = _context.Orders.AsQueryable();
+            var queryData = _context.Orders
+                                    .Include(o => o.Customer)
+                                    .Include(o => o.Employee)
+                                    .Include(o => o.ShipViaNavigation)
+                                    .AsQueryable();
 
             if (orderID != null && orderID > 0)
             {
@@ -61,6 +66,57 @@ namespace NorthwindAPI.Controllers
             }).ToListAsync();
 
             return ordersDTOs;
+        }
+
+        // GET: api/Orders/5
+        [HttpGet("{orderID}")]
+        public async Task<ActionResult<OrdersDTO>> GetOrders(int orderID)
+        {
+            OrdersDTO ordersDTO = new OrdersDTO();
+
+            var order = await _context.Orders
+                                      .Include(o => o.Customer)
+                                      .Include(o => o.Employee)
+                                      .Include(o => o.ShipViaNavigation)
+                                      .Include(o => o.Order_Details).ThenInclude(o => o.Product)
+                                      .FirstOrDefaultAsync(o => o.OrderID == orderID);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            ordersDTO = new OrdersDTO
+            {
+                OrderID = order.OrderID,
+                CustomerID = order.CustomerID,
+                CustomerName = order.Customer.CompanyName,
+                EmployeeID = order.EmployeeID,
+                EmployeeName = order.Employee.FirstName + " " + order.Employee.LastName,
+                OrderDate = order.OrderDate,
+                RequiredDate = order.RequiredDate,
+                ShippedDate = order.ShippedDate,
+                ShipVia = order.ShipVia,
+                ShipCompany = order.ShipViaNavigation.CompanyName,
+                Freight = order.Freight,
+                ShipName = order.ShipName,
+                ShipAddress = order.ShipAddress,
+                ShipCity = order.ShipCity,
+                ShipRegion = order.ShipRegion,
+                ShipPostalCode = order.ShipPostalCode,
+                ShipCountry = order.ShipCountry,
+                orderDetails = order.Order_Details.Select(o => new OrderDetailsDTO()
+                {
+                    OrderID = o.OrderID,
+                    ProductID = o.ProductID,
+                    ProductName = o.Product.ProductName,
+                    UnitPrice = o.UnitPrice,
+                    Quantity = o.Quantity,
+                    Discount = o.Discount,
+                }).ToList()
+            };
+
+            return ordersDTO;
         }
 
         // PUT: api/Orders/5
