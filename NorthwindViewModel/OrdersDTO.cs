@@ -6,7 +6,11 @@
 
         public string CustomerID { get; set; }
 
+        public string CustomerName { get; set; }
+
         public int? EmployeeID { get; set; }
+
+        public string EmployeeName { get; set; }
 
         public DateTime? OrderDate { get; set; }
 
@@ -15,6 +19,8 @@
         public DateTime? ShippedDate { get; set; }
 
         public int? ShipVia { get; set; }
+
+        public string ShipCompany {  get; set; }
 
         public decimal? Freight { get; set; }
 
@@ -29,13 +35,5 @@
         public string ShipPostalCode { get; set; }
 
         public string ShipCountry { get; set; }
-
-        //public virtual Customers Customer { get; set; }
-
-        //public virtual Employees Employee { get; set; }
-
-        //public virtual ICollection<Order_Details> Order_Details { get; set; } = new List<Order_Details>();
-
-        //public virtual Shippers ShipViaNavigation { get; set; }
     }
 }

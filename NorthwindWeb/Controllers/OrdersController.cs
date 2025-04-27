@@ -7,13 +7,13 @@ namespace NorthwindWeb.Controllers
 {
     public class OrdersController : Controller
     {
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string orderID, string customerName)
         {
             List<OrdersDTO> ordersDTOs = new List<OrdersDTO>();
 
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:7145/");
-            HttpResponseMessage response = await client.GetAsync("api/Orders");
+            HttpResponseMessage response = await client.GetAsync($"api/Orders?orderID={orderID}&customerName={customerName}");
 
             if (response.IsSuccessStatusCode)
             {

@@ -2,41 +2,39 @@
 
 @model List<OrdersDTO>
 
+<form>
+    <table>
+        <tr>
+            <td>OrderID：</td>
+            <td><input type="number" name="orderID" /></td>
+            <td>CustomerName：</td>
+            <td><input type="text" name="customerName" /></td>
+            <td><button type="submit">查詢</button></td>
+        </tr>
+    </table>
+</form>
+<br />
 <table class="table table-striped table-bordered">
     <tr>
-        <td>OrderID</td>
-        <td>CustomerID</td>
-        <td>EmployeeID</td>
-        <td>OrderDate</td>
-        <td>RequiredDate</td>
-        <td>ShippedDate</td>
-        <td>ShipVia</td>
-        <td>Freight</td>
-        <td>ShipName</td>
-        <td>ShipAddress</td>
-        <td>ShipCity</td>
-        <td>ShipRegion</td>
-        <td>ShipPostalCode</td>
-        <td>ShipCountry</td>
+        <th>OrderID</th>
+        <th>CustomerName</th>
+        <th>EmployeeName</th>
+        <th>OrderDate</th>
+        <th>RequiredDate</th>
+        <th>ShippedDate</th>
+        <th>Action</th>
     </tr>
 
     @foreach (OrdersDTO ordersDTO in @Model)
     {
         <tr>
             <td>@ordersDTO.OrderID</td>
-            <td>@ordersDTO.CustomerID</td>
-            <td>@ordersDTO.EmployeeID</td>
-            <td>@ordersDTO.OrderDate</td>
-            <td>@ordersDTO.RequiredDate</td>
-            <td>@ordersDTO.ShippedDate</td>
-            <td>@ordersDTO.ShipVia</td>
-            <td>@ordersDTO.Freight</td>
-            <td>@ordersDTO.ShipName</td>
-            <td>@ordersDTO.ShipAddress</td>
-            <td>@ordersDTO.ShipCity</td>
-            <td>@ordersDTO.ShipRegion</td>
-            <td>@ordersDTO.ShipPostalCode</td>
-            <td>@ordersDTO.ShipCountry</td>
+            <td>@ordersDTO.CustomerName</td>
+            <td>@ordersDTO.EmployeeName</td>
+            <td>@(ordersDTO.OrderDate?.ToString("yyyy/MM/dd") ?? string.Empty) </td>
+            <td>@(ordersDTO.RequiredDate?.ToString("yyyy/MM/dd") ?? string.Empty)</td>
+            <td>@(ordersDTO.ShippedDate?.ToString("yyyy/MM/dd") ?? string.Empty)</td>
+            <td><button type="submit">Details</button><button type="submit">Edit</button><button type="submit">Delete</button></td>
         </tr>
     }
 </table>

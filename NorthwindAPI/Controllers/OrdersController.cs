@@ -23,44 +23,44 @@ namespace NorthwindAPI.Controllers
 
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrdersDTO>>> GetOrders()
+        public async Task<ActionResult<IEnumerable<OrdersDTO>>> GetOrders(int? orderID, string? customerName)
         {
             List<OrdersDTO> ordersDTOs = new List<OrdersDTO>();
 
-            ordersDTOs = await _context.Orders
-                                       .Select(o => new OrdersDTO
-                                       {
-                                           OrderID = o.OrderID,
-                                           CustomerID = o.CustomerID,
-                                           EmployeeID = o.EmployeeID,
-                                           OrderDate = o.OrderDate,
-                                           RequiredDate = o.RequiredDate,
-                                           ShippedDate = o.ShippedDate,
-                                           ShipVia = o.ShipVia,
-                                           Freight = o.Freight,
-                                           ShipName = o.ShipName,
-                                           ShipAddress = o.ShipAddress,
-                                           ShipCity = o.ShipCity,
-                                           ShipRegion = o.ShipRegion,
-                                           ShipPostalCode = o.ShipPostalCode,
-                                           ShipCountry = o.ShipCountry,
-                                       }).ToListAsync();
+            var queryData = _context.Orders.AsQueryable();
 
-            return ordersDTOs;
-        }
-
-        // GET: api/Orders/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Orders>> GetOrders(int id)
-        {
-            var orders = await _context.Orders.FindAsync(id);
-
-            if (orders == null)
+            if (orderID != null && orderID > 0)
             {
-                return NotFound();
+                queryData = queryData.Where(o => o.OrderID == orderID);
             }
 
-            return orders;
+            if (!string.IsNullOrEmpty(customerName))
+            {
+                queryData = queryData.Where(o => o.Customer.CompanyName == customerName);
+            }
+
+            ordersDTOs = await queryData.Select(o => new OrdersDTO
+            {
+                OrderID = o.OrderID,
+                CustomerID = o.CustomerID,
+                CustomerName = o.Customer.CompanyName,
+                EmployeeID = o.EmployeeID,
+                EmployeeName = o.Employee.FirstName + " " + o.Employee.LastName,
+                OrderDate = o.OrderDate,
+                RequiredDate = o.RequiredDate,
+                ShippedDate = o.ShippedDate,
+                ShipVia = o.ShipVia,
+                ShipCompany = o.ShipViaNavigation.CompanyName,
+                Freight = o.Freight,
+                ShipName = o.ShipName,
+                ShipAddress = o.ShipAddress,
+                ShipCity = o.ShipCity,
+                ShipRegion = o.ShipRegion,
+                ShipPostalCode = o.ShipPostalCode,
+                ShipCountry = o.ShipCountry,
+            }).ToListAsync();
+
+            return ordersDTOs;
         }
 
         // PUT: api/Orders/5
