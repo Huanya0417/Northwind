@@ -1,0 +1,42 @@
+﻿@using NorthwindViewModel
+
+@model List<OrdersDTO>
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <td>OrderID</td>
+        <td>CustomerID</td>
+        <td>EmployeeID</td>
+        <td>OrderDate</td>
+        <td>RequiredDate</td>
+        <td>ShippedDate</td>
+        <td>ShipVia</td>
+        <td>Freight</td>
+        <td>ShipName</td>
+        <td>ShipAddress</td>
+        <td>ShipCity</td>
+        <td>ShipRegion</td>
+        <td>ShipPostalCode</td>
+        <td>ShipCountry</td>
+    </tr>
+
+    @foreach (OrdersDTO ordersDTO in @Model)
+    {
+        <tr>
+            <td>@ordersDTO.OrderID</td>
+            <td>@ordersDTO.CustomerID</td>
+            <td>@ordersDTO.EmployeeID</td>
+            <td>@ordersDTO.OrderDate</td>
+            <td>@ordersDTO.RequiredDate</td>
+            <td>@ordersDTO.ShippedDate</td>
+            <td>@ordersDTO.ShipVia</td>
+            <td>@ordersDTO.Freight</td>
+            <td>@ordersDTO.ShipName</td>
+            <td>@ordersDTO.ShipAddress</td>
+            <td>@ordersDTO.ShipCity</td>
+            <td>@ordersDTO.ShipRegion</td>
+            <td>@ordersDTO.ShipPostalCode</td>
+            <td>@ordersDTO.ShipCountry</td>
+        </tr>
+    }
+</table>

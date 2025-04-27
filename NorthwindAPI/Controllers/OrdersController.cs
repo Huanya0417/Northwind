@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NorthwindAPI.Models;
+using NorthwindViewModel;
 
 namespace NorthwindAPI.Controllers
 {
@@ -22,9 +23,30 @@ namespace NorthwindAPI.Controllers
 
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Orders>>> GetOrders()
+        public async Task<ActionResult<IEnumerable<OrdersDTO>>> GetOrders()
         {
-            return await _context.Orders.ToListAsync();
+            List<OrdersDTO> ordersDTOs = new List<OrdersDTO>();
+
+            ordersDTOs = await _context.Orders
+                                       .Select(o => new OrdersDTO
+                                       {
+                                           OrderID = o.OrderID,
+                                           CustomerID = o.CustomerID,
+                                           EmployeeID = o.EmployeeID,
+                                           OrderDate = o.OrderDate,
+                                           RequiredDate = o.RequiredDate,
+                                           ShippedDate = o.ShippedDate,
+                                           ShipVia = o.ShipVia,
+                                           Freight = o.Freight,
+                                           ShipName = o.ShipName,
+                                           ShipAddress = o.ShipAddress,
+                                           ShipCity = o.ShipCity,
+                                           ShipRegion = o.ShipRegion,
+                                           ShipPostalCode = o.ShipPostalCode,
+                                           ShipCountry = o.ShipCountry,
+                                       }).ToListAsync();
+
+            return ordersDTOs;
         }
 
         // GET: api/Orders/5
