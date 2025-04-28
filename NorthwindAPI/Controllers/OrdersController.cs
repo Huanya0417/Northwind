@@ -192,12 +192,49 @@ namespace NorthwindAPI.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Orders>> PostOrders(Orders orders)
+        public async Task<ActionResult<Orders>> PostOrders(OrdersDTO ordersDTO)
         {
-            _context.Orders.Add(orders);
-            await _context.SaveChangesAsync();
+            try
+            {
+                Orders orders = new Orders()
+                {
+                    CustomerID = ordersDTO.CustomerID,
+                    EmployeeID = ordersDTO.EmployeeID,
+                    OrderDate = ordersDTO.OrderDate,
+                    RequiredDate = ordersDTO.RequiredDate,
+                    ShippedDate = ordersDTO.ShippedDate,
+                    ShipVia = ordersDTO.ShipVia,
+                    Freight = ordersDTO.Freight,
+                    ShipName = ordersDTO.ShipName,
+                    ShipAddress = ordersDTO.ShipAddress,
+                    ShipCity = ordersDTO.ShipCity,
+                    ShipRegion = ordersDTO.ShipRegion,
+                    ShipPostalCode = ordersDTO.ShipPostalCode,
+                    ShipCountry = ordersDTO.ShipCountry
+                };
 
-            return CreatedAtAction("GetOrders", new { id = orders.OrderID }, orders);
+                _context.Orders.Add(orders);
+                await _context.SaveChangesAsync();
+
+                List<Order_Details> order_Details = ordersDTO.orderDetails.Select(o => new Order_Details()
+                {
+                    OrderID = orders.OrderID,
+                    ProductID = o.ProductID ?? 0,
+                    UnitPrice = o.UnitPrice ?? 0,
+                    Quantity = o.Quantity ?? 0,
+                    Discount = o.Discount ?? 0
+                }).ToList();
+
+                _context.Order_Details.AddRange(order_Details);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return Ok();
         }
 
         private bool OrdersExists(int id)
