@@ -26,7 +26,7 @@ namespace NorthwindWeb.Controllers
             return View(ordersDTOs);
         }
 
-        [Route("[action]/{orderID}")]
+        [Route("Detail/{orderID}")]
         public async Task<IActionResult> Detail(string orderID)
         {
             OrdersDTO ordersDTO = new OrdersDTO();
@@ -45,7 +45,7 @@ namespace NorthwindWeb.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{orderID}")]
+        [Route("Edit/{orderID}")]
         public async Task<IActionResult> Edit(string orderID)
         {
             OrdersDTO ordersDTO = new OrdersDTO();
@@ -73,8 +73,8 @@ namespace NorthwindWeb.Controllers
         }
 
         [HttpPost]
-        [Route("[action]/{orderID}")]
-        public async Task<IActionResult> Edit(string orderID, OrdersDTO ordersDTO)
+        [Route("Edit/{orderID}")]
+        public async Task<IActionResult> PostEdit(string orderID, OrdersDTO ordersDTO)
         {
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:7145/");
@@ -93,6 +93,45 @@ namespace NorthwindWeb.Controllers
             TempData["SuccessMsg"] = "修改成功";
 
             return RedirectToAction("Edit", "Orders");
+        }
+
+        [HttpGet]
+        [Route("Delete/{orderID}")]
+        public async Task<IActionResult> Delete(string orderID)
+        {
+            OrdersDTO ordersDTO = new OrdersDTO();
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:7145/");
+            HttpResponseMessage response = await client.GetAsync($"api/Orders/{orderID}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                ordersDTO = JsonConvert.DeserializeObject<OrdersDTO>(json);
+            }
+
+            return View(ordersDTO);
+        }
+
+        [HttpPost]
+        [Route("Delete/{orderID}")]
+        public async Task<IActionResult> PostDelete(string orderID)
+        {
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:7145/");
+
+            HttpResponseMessage response = await client.DeleteAsync($"api/Orders/{orderID}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError("", "刪除失敗");
+                return RedirectToAction("Delete", "Orders");
+            }
+
+            TempData["SuccessMsg"] = "刪除成功";
+
+            return RedirectToAction("index", "Orders");
         }
     }
 }

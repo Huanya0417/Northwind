@@ -2,7 +2,15 @@
 
 @model List<OrdersDTO>
 
+@if (TempData["SuccessMsg"] != null)
+{
+    <script>
+        alert('@Html.Raw(TempData["SuccessMsg"])');
+    </script>
+}
+
 <form>
+    <a type="button" class="btn btn-success btn-sm" style="float:right" asp-controller="Orders" asp-action="Add">Add</a>
     <table>
         <tr>
             <td>OrderID：</td>
@@ -10,7 +18,6 @@
             <td>CustomerName：</td>
             <td><input type="text" name="customerName" /></td>
             <td><button type="submit">Search</button></td>
-            <td><a type="button" class="btn btn-info btn-sm" asp-controller="Orders" asp-action="Add">Add</a></td>
         </tr>
     </table>
 </form>
@@ -37,8 +44,8 @@
             <td>@(ordersDTO.ShippedDate?.ToString("yyyy/MM/dd") ?? string.Empty)</td>
             <td>
                 <a type="button" class="btn btn-info btn-sm" asp-controller="Orders" asp-action="Detail" asp-route-orderID="@ordersDTO.OrderID">Detail</a>
-                <a type="button" class="btn btn-info btn-sm" asp-controller="Orders" asp-action="Edit" asp-route-orderID="@ordersDTO.OrderID">Edit</a>
-                <button type="submit">Delete</button>
+                <a type="button" class="btn btn-warning btn-sm" asp-controller="Orders" asp-action="Edit" asp-route-orderID="@ordersDTO.OrderID">Edit</a>
+                <a type="button" class="btn btn-danger btn-sm" asp-controller="Orders" asp-action="Delete" asp-route-orderID="@ordersDTO.OrderID">Delete</a>
             </td>
         </tr>
     }

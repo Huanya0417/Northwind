@@ -160,7 +160,33 @@ namespace NorthwindAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
+        }
+
+        // DELETE: api/Orders/5
+        [HttpDelete("{orderID}")]
+        public async Task<IActionResult> DeleteOrders(int orderID)
+        {
+            var Order_Details = await _context.Order_Details.Where(o => o.OrderID == orderID).ToListAsync();
+
+            if (Order_Details == null)
+            {
+                return NotFound();
+            }
+
+            _context.Order_Details.RemoveRange(Order_Details);
+
+            var orders = await _context.Orders.FindAsync(orderID);
+
+            if (orders == null)
+            {
+                return NotFound();
+            }
+
+            _context.Orders.Remove(orders);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         // POST: api/Orders
@@ -172,22 +198,6 @@ namespace NorthwindAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOrders", new { id = orders.OrderID }, orders);
-        }
-
-        // DELETE: api/Orders/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrders(int id)
-        {
-            var orders = await _context.Orders.FindAsync(id);
-            if (orders == null)
-            {
-                return NotFound();
-            }
-
-            _context.Orders.Remove(orders);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool OrdersExists(int id)
