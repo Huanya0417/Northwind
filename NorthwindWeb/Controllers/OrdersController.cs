@@ -48,21 +48,6 @@ namespace NorthwindWeb.Controllers
         [Route("[action]/{orderID}")]
         public async Task<IActionResult> Edit(string orderID)
         {
-            //ViewBag.SelectDataList =
-            //    new List<SelectListItem>() {
-            //        new SelectListItem() { Value = "1", Text = "這是1",  },
-            //        new SelectListItem() { Value = "2", Text = "這是2" },
-            //        new SelectListItem() { Value = "3", Text = "這是3" },
-            //        new SelectListItem() { Value = "4", Text = "這是4" },
-            //        new SelectListItem() { Value = "5", Text = "這是5" }
-            //    };
-
-            //"api/SelectItem/Region"
-            //    =>  List<SelectListItem>()
-            //"api/SelectItem/Customer"
-            //    =>  List<SelectListItem>()
-
-
             OrdersDTO ordersDTO = new OrdersDTO();
 
             HttpClient client = new HttpClient();
@@ -73,6 +58,15 @@ namespace NorthwindWeb.Controllers
             {
                 string json = await response.Content.ReadAsStringAsync();
                 ordersDTO = JsonConvert.DeserializeObject<OrdersDTO>(json);
+            }
+
+            // 取得 ShipVia 下拉選單內容
+            response = await client.GetAsync($"api/SelectItems/ShipVia");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                ViewBag.ShipViaList = JsonConvert.DeserializeObject<List<SelectListItem>>(json);
             }
 
             return View(ordersDTO);

@@ -58,11 +58,7 @@
         </tr>
         <tr>
             <td>ShipCompany：</td>
-            <td>
-                <select asp-for="ShipVia">
-                    <option value="@Model.ShipVia">@Model.ShipCompany</option>
-                </select>
-            </td>
+            <td><select asp-items="ViewBag.ShipViaList" asp-for="@Model.ShipVia"></select></td>
             <td>ShipName：</td>
             <td><input type="text" asp-for="ShipName" /></td>
         </tr>
@@ -106,4 +102,3 @@
     </table>
 </form>
 
-<select asp-items="ViewBag.SelectDataList" asp-for="@Model.EmployeeID"></select>
