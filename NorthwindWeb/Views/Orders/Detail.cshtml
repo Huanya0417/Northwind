@@ -66,7 +66,7 @@
         <td>Quantity</td>
         <td>Discount</td>
     </tr>
-        @foreach (OrderDetailsDTO orderDetails in @Model.orderDetails)
+    @foreach (OrderDetailsDTO orderDetails in @Model.orderDetails)
     {
         <tr>
             <td><input type="text" value="@orderDetails.ProductName" disabled /></td>
@@ -74,6 +74,6 @@
             <td><input type="number" value="@orderDetails.Quantity" disabled /></td>
             <td><input type="number" value="@orderDetails.Discount" disabled /></td>
         </tr>
-        }
+    }
 </table>
 

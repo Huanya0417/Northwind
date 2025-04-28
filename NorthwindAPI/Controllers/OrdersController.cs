@@ -121,15 +121,28 @@ namespace NorthwindAPI.Controllers
 
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrders(int id, Orders orders)
+        [HttpPut("{orderID}")]
+        public async Task<IActionResult> PutOrders(int orderID, OrdersDTO ordersDTO)
         {
-            if (id != orders.OrderID)
+            if (orderID != ordersDTO.OrderID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(orders).State = EntityState.Modified;
+            var entity = await _context.Orders.FindAsync(orderID);
+
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            entity.ShipVia = ordersDTO.ShipVia;
+            entity.ShipName = ordersDTO.ShipName;
+            entity.ShipAddress = ordersDTO.ShipAddress;
+            entity.ShipCity = ordersDTO.ShipCity;
+            entity.ShipRegion = ordersDTO.ShipRegion;
+            entity.ShipPostalCode = ordersDTO.ShipPostalCode;
+            entity.ShipCountry = ordersDTO.ShipCountry;
 
             try
             {
@@ -137,7 +150,7 @@ namespace NorthwindAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrdersExists(id))
+                if (!OrdersExists(orderID))
                 {
                     return NotFound();
                 }

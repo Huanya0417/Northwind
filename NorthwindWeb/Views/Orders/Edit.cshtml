@@ -1,0 +1,109 @@
+﻿@using NorthwindViewModel
+
+@model OrdersDTO
+
+<style>
+    input {
+        width: 100%;
+    }
+
+    select {
+        width: 100%;
+    }
+</style>
+
+<br />
+
+@if (TempData["SuccessMsg"] != null)
+{
+    <script>
+        alert('@Html.Raw(TempData["SuccessMsg"])');
+    </script>
+}
+
+<form method="post">
+    <table class="table table-bordered">
+        <tr>
+            <td>OrderID：</td>
+            <td colspan="3"><input type="number" asp-for="OrderID" disabled /></td>
+        </tr>
+        <tr>
+            <td>CustomerName：</td>
+            <td>
+                <select asp-for="CustomerID" disabled>
+                    <option value="@Model.CustomerID">@Model.CustomerName</option>
+                </select>
+            </td>
+            <td>EmployeeName：</td>
+            <td>
+                <select asp-for="EmployeeID" disabled>
+                    <option value="@Model.EmployeeID">@Model.EmployeeName</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>OrderDate：</td>
+            <td><input type="date" asp-for="OrderDate" asp-format="{0:yyyy-MM-dd}" disabled /></td>
+            <td>RequiredDate：</td>
+            <td><input type="date" asp-for="RequiredDate" asp-format="{0:yyyy-MM-dd}" disabled /></td>
+        </tr>
+        <tr>
+            <td colspan="4" align="center">Shipped</td>
+        </tr>
+        <tr>
+            <td>ShippedDate：</td>
+            <td><input type="date" asp-for="ShippedDate" asp-format="{0:yyyy-MM-dd}" disabled /></td>
+            <td>Freight：</td>
+            <td><input type="number" asp-for="Freight" disabled /></td>
+        </tr>
+        <tr>
+            <td>ShipCompany：</td>
+            <td>
+                <select asp-for="ShipVia">
+                    <option value="@Model.ShipVia">@Model.ShipCompany</option>
+                </select>
+            </td>
+            <td>ShipName：</td>
+            <td><input type="text" asp-for="ShipName" /></td>
+        </tr>
+        <tr>
+            <td>ShipAddress：</td>
+            <td colspan="3"><input type="text" asp-for="ShipAddress" /></td>
+        </tr>
+        <tr>
+            <td>ShipCity：</td>
+            <td><input type="text" asp-for="ShipCity" /></td>
+            <td>ShipRegion：</td>
+            <td><input type="text" asp-for="ShipRegion" /></td>
+        </tr>
+        <tr>
+            <td>ShipPostalCode：</td>
+            <td><input type="text" asp-for="ShipPostalCode" /></td>
+            <td>ShipCountry：</td>
+            <td><input type="text" asp-for="ShipCountry" /></td>
+        </tr>
+        <tr>
+            <td colspan="4" align="center">Order Details</td>
+        </tr>
+        <tr>
+            <td>ProductName</td>
+            <td>UnitPrice</td>
+            <td>Quantity</td>
+            <td>Discount</td>
+        </tr>
+        @foreach (OrderDetailsDTO orderDetails in @Model.orderDetails)
+        {
+            <tr>
+                <td><input type="text" asp-for="@orderDetails.ProductName" disabled /></td>
+                <td><input type="number" asp-for="@orderDetails.UnitPrice" disabled /></td>
+                <td><input type="number" asp-for="@orderDetails.Quantity" disabled /></td>
+                <td><input type="number" asp-for="@orderDetails.Discount" disabled /></td>
+            </tr>
+        }
+        <tr>
+            <td colspan="4" align="center"><button type="submit" style="width:100%">修改</button></td>
+        </tr>
+    </table>
+</form>
+
+<select asp-items="ViewBag.SelectDataList" asp-for="@Model.EmployeeID"></select>
