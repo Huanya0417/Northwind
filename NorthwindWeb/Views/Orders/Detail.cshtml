@@ -6,56 +6,60 @@
     input {
         width: 100%;
     }
+
+    select {
+        width: 100%;
+    }
 </style>
 
 <br />
 <table class="table table-bordered">
     <tr>
         <td>OrderID：</td>
-        <td colspan="3"><input type="number" value="@Model.OrderID" disabled /></td>
+        <td colspan="3"><input type="number" asp-for="OrderID" disabled /></td>
     </tr>
     <tr>
         <td>CustomerName：</td>
-        <td><input type="text" value="@Model.CustomerName" disabled /></td>
+        <td><select asp-items="ViewBag.CustomerIDList" asp-for="CustomerID" disabled></select></td>
         <td>EmployeeName：</td>
-        <td><input type="text" value="@Model.EmployeeName" disabled /></td>
+        <td><select asp-items="ViewBag.EmployeeIDList" asp-for="EmployeeID" disabled></select></td>
     </tr>
     <tr>
         <td>OrderDate：</td>
-        <td><input type="date" value="@(Model.OrderDate?.ToString("yyyy-MM-dd") ?? string.Empty)" disabled /></td>
+        <td><input type="date" asp-for="OrderDate" asp-format="{0:yyyy-MM-dd}" disabled /></td>
         <td>RequiredDate：</td>
-        <td><input type="date" value="@(Model.RequiredDate?.ToString("yyyy-MM-dd") ?? string.Empty)" disabled /></td>
+        <td><input type="date" asp-for="RequiredDate" asp-format="{0:yyyy-MM-dd}" disabled /></td>
     </tr>
     <tr>
         <td colspan="4" align="center">Shipped</td>
     </tr>
     <tr>
         <td>ShippedDate：</td>
-        <td><input type="date" value="@(Model.ShippedDate?.ToString("yyyy-MM-dd") ?? string.Empty)" disabled /></td>
+        <td><input type="date" asp-for="ShippedDate" asp-format="{0:yyyy-MM-dd}" disabled /></td>
         <td>Freight：</td>
-        <td><input type="number" value="@Model.Freight" disabled /></td>
+        <td><input type="number" asp-for="Freight" min="0" step="0.01" disabled /></td>
     </tr>
     <tr>
         <td>ShipCompany：</td>
-        <td><input type="text" value="@Model.ShipCompany" disabled /></td>
+        <td><select asp-items="ViewBag.ShipViaList" asp-for="ShipVia" disabled></select></td>
         <td>ShipName：</td>
-        <td><input type="text" value="@Model.ShipName" disabled /></td>
+        <td><input type="text" asp-for="ShipName" disabled /></td>
     </tr>
     <tr>
         <td>ShipAddress：</td>
-        <td colspan="3"><input type="text" value="@Model.ShipAddress" disabled /></td>
+        <td colspan="3"><input type="text" asp-for="ShipAddress" disabled /></td>
     </tr>
     <tr>
         <td>ShipCity：</td>
-        <td><input type="text" value="@Model.ShipCity" disabled /></td>
+        <td><input type="text" asp-for="ShipCity" disabled /></td>
         <td>ShipRegion：</td>
-        <td><input type="text" value="@Model.ShipRegion" disabled /></td>
+        <td><input type="text" asp-for="ShipRegion" disabled /></td>
     </tr>
     <tr>
         <td>ShipPostalCode：</td>
-        <td><input type="text" value="@Model.ShipPostalCode" disabled /></td>
+        <td><input type="text" asp-for="ShipPostalCode" disabled /></td>
         <td>ShipCountry：</td>
-        <td><input type="text" value="@Model.ShipCountry" disabled /></td>
+        <td><input type="text" asp-for="ShipCountry" disabled /></td>
     </tr>
     <tr>
         <td colspan="4" align="center">Order Details</td>
@@ -69,10 +73,10 @@
     @foreach (OrderDetailsDTO orderDetails in @Model.orderDetails)
     {
         <tr>
-            <td><input type="text" value="@orderDetails.ProductName" disabled /></td>
-            <td><input type="number" value="@orderDetails.UnitPrice" disabled /></td>
-            <td><input type="number" value="@orderDetails.Quantity" disabled /></td>
-            <td><input type="number" value="@orderDetails.Discount" disabled /></td>
+            <td><select asp-items="ViewBag.ProductIDList" asp-for="@orderDetails.ProductID" disabled></select></td>
+            <td><input type="number" asp-for="@orderDetails.UnitPrice" disabled /></td>
+            <td><input type="number" asp-for="@orderDetails.Quantity" disabled /></td>
+            <td><input type="number" asp-for="@orderDetails.Discount" disabled /></td>
         </tr>
     }
 </table>

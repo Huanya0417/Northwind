@@ -29,17 +29,9 @@
         </tr>
         <tr>
             <td>CustomerName：</td>
-            <td>
-                <select asp-for="CustomerID" disabled>
-                    <option value="@Model.CustomerID">@Model.CustomerName</option>
-                </select>
-            </td>
+            <td><select asp-items="ViewBag.CustomerIDList" asp-for="CustomerID" disabled></select></td>
             <td>EmployeeName：</td>
-            <td>
-                <select asp-for="EmployeeID" disabled>
-                    <option value="@Model.EmployeeID">@Model.EmployeeName</option>
-                </select>
-            </td>
+            <td><select asp-items="ViewBag.EmployeeIDList" asp-for="EmployeeID" disabled></select></td>
         </tr>
         <tr>
             <td>OrderDate：</td>
@@ -54,11 +46,11 @@
             <td>ShippedDate：</td>
             <td><input type="date" asp-for="ShippedDate" asp-format="{0:yyyy-MM-dd}" disabled /></td>
             <td>Freight：</td>
-            <td><input type="number" asp-for="Freight" disabled /></td>
+            <td><input type="number" asp-for="Freight" min="0" step="0.01" disabled /></td>
         </tr>
         <tr>
             <td>ShipCompany：</td>
-            <td><select asp-items="ViewBag.ShipViaList" asp-for="@Model.ShipVia"></select></td>
+            <td><select asp-items="ViewBag.ShipViaList" asp-for="ShipVia"></select></td>
             <td>ShipName：</td>
             <td><input type="text" asp-for="ShipName" /></td>
         </tr>
@@ -90,7 +82,7 @@
         @foreach (OrderDetailsDTO orderDetails in @Model.orderDetails)
         {
             <tr>
-                <td><input type="text" asp-for="@orderDetails.ProductName" disabled /></td>
+                <td><select asp-items="ViewBag.ProductIDList" asp-for="@orderDetails.ProductID" disabled></select></td>
                 <td><input type="number" asp-for="@orderDetails.UnitPrice" disabled /></td>
                 <td><input type="number" asp-for="@orderDetails.Quantity" disabled /></td>
                 <td><input type="number" asp-for="@orderDetails.Discount" disabled /></td>

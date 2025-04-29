@@ -1,14 +1,17 @@
-﻿using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using NorthwindViewModel;
+using System.Text;
 
 namespace NorthwindWeb.Controllers
 {
     public class OrdersController : Controller
     {
+        /// <summary>  </summary>
+        /// <param name="orderID"></param>
+        /// <param name="customerName"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Index(string orderID, string customerName)
         {
             List<OrdersDTO> ordersDTOs = new List<OrdersDTO>();
@@ -41,6 +44,8 @@ namespace NorthwindWeb.Controllers
                 ordersDTO = JsonConvert.DeserializeObject<OrdersDTO>(json);
             }
 
+            await GetSelectListItem(client);
+
             return View(ordersDTO);
         }
 
@@ -60,14 +65,7 @@ namespace NorthwindWeb.Controllers
                 ordersDTO = JsonConvert.DeserializeObject<OrdersDTO>(json);
             }
 
-            // 取得 ShipVia 下拉選單內容
-            response = await client.GetAsync($"api/SelectItems/ShipVia");
-
-            if (response.IsSuccessStatusCode)
-            {
-                string json = await response.Content.ReadAsStringAsync();
-                ViewBag.ShipViaList = JsonConvert.DeserializeObject<List<SelectListItem>>(json);
-            }
+            await GetSelectListItem(client);
 
             return View(ordersDTO);
         }
@@ -111,6 +109,8 @@ namespace NorthwindWeb.Controllers
                 ordersDTO = JsonConvert.DeserializeObject<OrdersDTO>(json);
             }
 
+            await GetSelectListItem(client);
+
             return View(ordersDTO);
         }
 
@@ -141,8 +141,40 @@ namespace NorthwindWeb.Controllers
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:7145/");
 
+            await GetSelectListItem(client);
+
+            return View();
+        }
+
+        [HttpPost]
+        [Route("Add")]
+        public async Task<IActionResult> PostAdd(string orderID, OrdersDTO ordersDTO)
+        {
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:7145/");
+
+            string json = JsonConvert.SerializeObject(ordersDTO);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PostAsync($"api/Orders", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError("", "新增失敗");
+                return View(ordersDTO);
+            }
+
+            TempData["SuccessMsg"] = "新增成功";
+
+            return RedirectToAction("index", "Orders");
+        }
+
+        private async Task GetSelectListItem(HttpClient client)
+        {
+            HttpResponseMessage response;
+
             // 取得 CustomerID 下拉選單內容
-            HttpResponseMessage response = await client.GetAsync("api/SelectItems/CustomerID");
+            response = await client.GetAsync("api/SelectItems/CustomerID");
 
             if (response.IsSuccessStatusCode)
             {
@@ -176,31 +208,6 @@ namespace NorthwindWeb.Controllers
                 string json = await response.Content.ReadAsStringAsync();
                 ViewBag.ProductIDList = JsonConvert.DeserializeObject<List<SelectListItem>>(json);
             }
-
-            return View();
-        }
-
-        [HttpPost]
-        [Route("Add")]
-        public async Task<IActionResult> PostAdd(string orderID, OrdersDTO ordersDTO)
-        {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:7145/");
-
-            string json = JsonConvert.SerializeObject(ordersDTO);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await client.PostAsync($"api/Orders", content);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError("", "新增失敗");
-                return View(ordersDTO);
-            }
-
-            TempData["SuccessMsg"] = "新增成功";
-
-            return RedirectToAction("index", "Orders");
         }
     }
 }
