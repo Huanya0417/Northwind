@@ -1,11 +1,7 @@
-﻿using System.ComponentModel;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using NorthwindAPI.Models;
-using NorthwindViewModel;
 
 namespace NorthwindAPI.Controllers
 {
@@ -20,6 +16,8 @@ namespace NorthwindAPI.Controllers
             _context = context;
         }
 
+        /// <summary> 取得客戶代碼與姓名 </summary>
+        /// <returns></returns>
         [HttpGet("CustomerID")]
         public async Task<List<SelectListItem>> GetCustomerID()
         {
@@ -35,6 +33,8 @@ namespace NorthwindAPI.Controllers
             return selectListItems;
         }
 
+        /// <summary> 取得公司代碼與姓名 </summary>
+        /// <returns></returns>
         [HttpGet("EmployeeID")]
         public async Task<List<SelectListItem>> GetEmployeeID()
         {
@@ -50,18 +50,11 @@ namespace NorthwindAPI.Controllers
             return selectListItems;
         }
 
+        /// <summary> 取得貨運公司代碼與姓名 </summary>
+        /// <returns></returns>
         [HttpGet("ShipVia")]
         public async Task<List<SelectListItem>> GetShipVia()
         {
-            //List<SelectListItem> selectListItems = new List<SelectListItem>();
-
-            //selectListItems = await _context.Shippers
-            //                                .Select(o => new SelectListItem
-            //                                {
-            //                                    Value = Convert.ToString(o.ShipperID),
-            //                                    Text = o.CompanyName,
-            //                                }).ToListAsync();
-
             List<SelectListItem> selectListItems = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "--- Please Select ---" } };
 
             selectListItems.AddRange(await _context.Shippers
@@ -74,6 +67,8 @@ namespace NorthwindAPI.Controllers
             return selectListItems;
         }
 
+        /// <summary> 取得產品代碼與名稱 </summary>
+        /// <returns></returns>
         [HttpGet("ProductID")]
         public async Task<List<SelectListItem>> GetProductID()
         {

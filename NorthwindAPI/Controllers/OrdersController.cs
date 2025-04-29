@@ -16,7 +16,15 @@ namespace NorthwindAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Orders
+        /// <summary>
+        /// 查詢訂單 API
+        /// GET：api/Orders
+        ///      api/Orders?orderID=AAA
+        ///      api/Orders?orderID=AAA&customerName=BBB
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <param name="customerName"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrdersDTO>>> GetOrders(int? orderID, string? customerName)
         {
@@ -25,7 +33,6 @@ namespace NorthwindAPI.Controllers
             var queryData = _context.Orders
                                     .Include(o => o.Customer)
                                     .Include(o => o.Employee)
-                                    .Include(o => o.ShipViaNavigation)
                                     .AsQueryable();
 
             if (orderID != null && orderID > 0)
@@ -41,27 +48,22 @@ namespace NorthwindAPI.Controllers
             ordersDTOs = await queryData.Select(o => new OrdersDTO
             {
                 OrderID = o.OrderID,
-                CustomerID = o.CustomerID,
                 CustomerName = o.Customer.CompanyName,
-                EmployeeID = o.EmployeeID,
                 EmployeeName = o.Employee.FirstName + " " + o.Employee.LastName,
                 OrderDate = o.OrderDate,
                 RequiredDate = o.RequiredDate,
                 ShippedDate = o.ShippedDate,
-                ShipVia = o.ShipVia,
-                Freight = o.Freight,
-                ShipName = o.ShipName,
-                ShipAddress = o.ShipAddress,
-                ShipCity = o.ShipCity,
-                ShipRegion = o.ShipRegion,
-                ShipPostalCode = o.ShipPostalCode,
-                ShipCountry = o.ShipCountry,
             }).ToListAsync();
 
             return ordersDTOs;
         }
 
-        // GET: api/Orders/5
+        /// <summary>
+        /// 查詢單筆訂單 API
+        /// GET：api/Orders/AAA
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
         [HttpGet("{orderID}")]
         public async Task<ActionResult<OrdersDTO>> GetOrders(int orderID)
         {
@@ -111,8 +113,13 @@ namespace NorthwindAPI.Controllers
             return ordersDTO;
         }
 
-        // PUT: api/Orders/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// 更新訂單 API
+        /// PUT：api/Orders/AAA
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <param name="ordersDTO"></param>
+        /// <returns></returns>
         [HttpPut("{orderID}")]
         public async Task<IActionResult> PutOrders(int orderID, OrdersDTO ordersDTO)
         {
@@ -155,7 +162,12 @@ namespace NorthwindAPI.Controllers
             return Ok();
         }
 
-        // DELETE: api/Orders/5
+        /// <summary>
+        /// 刪除訂單 API
+        /// DELETE：api/Orders/AAA
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
         [HttpDelete("{orderID}")]
         public async Task<IActionResult> DeleteOrders(int orderID)
         {
@@ -181,7 +193,12 @@ namespace NorthwindAPI.Controllers
             return Ok();
         }
 
-        // POST: api/Orders
+        /// <summary>
+        /// 新增訂單 API
+        /// POST：api/Orders
+        /// </summary>
+        /// <param name="ordersDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<Orders>> PostOrders(OrdersDTO ordersDTO)
         {
