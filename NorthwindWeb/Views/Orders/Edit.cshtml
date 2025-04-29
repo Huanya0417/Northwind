@@ -12,14 +12,16 @@
     }
 </style>
 
-<br />
-
 @if (TempData["SuccessMsg"] != null)
 {
     <script>
         alert('@Html.Raw(TempData["SuccessMsg"])');
     </script>
 }
+
+<a type="button" class="btn btn-secondary" asp-controller="Orders" asp-action="index"> &larr; Back</a>
+<br />
+<br />
 
 <form method="post">
     <table class="table table-bordered">

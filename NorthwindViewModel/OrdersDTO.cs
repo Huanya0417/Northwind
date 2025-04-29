@@ -20,8 +20,6 @@
 
         public int? ShipVia { get; set; }
 
-        public string? ShipCompany { get; set; }
-
         public decimal? Freight { get; set; }
 
         public string? ShipName { get; set; }

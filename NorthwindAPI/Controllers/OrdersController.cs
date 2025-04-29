@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NorthwindAPI.Models;
 using NorthwindViewModel;
-using static NuGet.Packaging.PackagingConstants;
 
 namespace NorthwindAPI.Controllers
 {
@@ -55,7 +49,6 @@ namespace NorthwindAPI.Controllers
                 RequiredDate = o.RequiredDate,
                 ShippedDate = o.ShippedDate,
                 ShipVia = o.ShipVia,
-                ShipCompany = o.ShipViaNavigation.CompanyName,
                 Freight = o.Freight,
                 ShipName = o.ShipName,
                 ShipAddress = o.ShipAddress,
@@ -97,7 +90,6 @@ namespace NorthwindAPI.Controllers
                 RequiredDate = order.RequiredDate,
                 ShippedDate = order.ShippedDate,
                 ShipVia = order.ShipVia,
-                ShipCompany = order.ShipViaNavigation.CompanyName,
                 Freight = order.Freight,
                 ShipName = order.ShipName,
                 ShipAddress = order.ShipAddress,
@@ -190,7 +182,6 @@ namespace NorthwindAPI.Controllers
         }
 
         // POST: api/Orders
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Orders>> PostOrders(OrdersDTO ordersDTO)
         {

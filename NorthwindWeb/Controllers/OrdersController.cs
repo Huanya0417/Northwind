@@ -8,7 +8,7 @@ namespace NorthwindWeb.Controllers
 {
     public class OrdersController : Controller
     {
-        /// <summary>  </summary>
+        /// <summary> 查詢所有訂單資料，並可依照條件進行篩選 </summary>
         /// <param name="orderID"></param>
         /// <param name="customerName"></param>
         /// <returns></returns>
@@ -29,6 +29,11 @@ namespace NorthwindWeb.Controllers
             return View(ordersDTOs);
         }
 
+        #region Detail
+
+        /// <summary> 查詢訂單明細資料 </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
         [Route("Detail/{orderID}")]
         public async Task<IActionResult> Detail(string orderID)
         {
@@ -44,11 +49,19 @@ namespace NorthwindWeb.Controllers
                 ordersDTO = JsonConvert.DeserializeObject<OrdersDTO>(json);
             }
 
+            // 取得頁面所需的下拉式選單內容
             await GetSelectListItem(client);
 
             return View(ordersDTO);
         }
 
+        #endregion Detail
+
+        #region Edit
+
+        /// <summary> 修改頁面查詢訂單明細資料 </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("Edit/{orderID}")]
         public async Task<IActionResult> Edit(string orderID)
@@ -65,11 +78,16 @@ namespace NorthwindWeb.Controllers
                 ordersDTO = JsonConvert.DeserializeObject<OrdersDTO>(json);
             }
 
+            // 取得頁面所需的下拉式選單內容
             await GetSelectListItem(client);
 
             return View(ordersDTO);
         }
 
+        /// <summary> 修改頁面更新資料 </summary>
+        /// <param name="orderID"></param>
+        /// <param name="ordersDTO"></param>
+        /// <returns> 導引至修改頁面 </returns>
         [HttpPost]
         [Route("Edit/{orderID}")]
         public async Task<IActionResult> PostEdit(string orderID, OrdersDTO ordersDTO)
@@ -93,6 +111,13 @@ namespace NorthwindWeb.Controllers
             return Redirect(orderID);
         }
 
+        #endregion Edit
+
+        #region Delete
+
+        /// <summary> 刪除頁面查詢訂單明細資料 </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("Delete/{orderID}")]
         public async Task<IActionResult> Delete(string orderID)
@@ -109,11 +134,15 @@ namespace NorthwindWeb.Controllers
                 ordersDTO = JsonConvert.DeserializeObject<OrdersDTO>(json);
             }
 
+            // 取得頁面所需的下拉式選單內容
             await GetSelectListItem(client);
 
             return View(ordersDTO);
         }
 
+        /// <summary> 刪除頁面刪除資料 </summary>
+        /// <param name="orderID"></param>
+        /// <returns> 導引至所有訂單頁面 </returns>
         [HttpPost]
         [Route("Delete/{orderID}")]
         public async Task<IActionResult> PostDelete(string orderID)
@@ -134,6 +163,12 @@ namespace NorthwindWeb.Controllers
             return RedirectToAction("index", "Orders");
         }
 
+        #endregion Delete
+
+        #region Add
+
+        /// <summary> 新增頁面 </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("Add")]
         public async Task<IActionResult> Add()
@@ -141,11 +176,16 @@ namespace NorthwindWeb.Controllers
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:7145/");
 
+            // 取得頁面所需的下拉式選單內容
             await GetSelectListItem(client);
 
             return View();
         }
 
+        /// <summary> 新增頁面新增資料 </summary>
+        /// <param name="orderID"></param>
+        /// <param name="ordersDTO"></param>
+        /// <returns> 導引至所有訂單頁面 </returns>
         [HttpPost]
         [Route("Add")]
         public async Task<IActionResult> PostAdd(string orderID, OrdersDTO ordersDTO)
@@ -169,6 +209,13 @@ namespace NorthwindWeb.Controllers
             return RedirectToAction("index", "Orders");
         }
 
+        #endregion Add
+
+        #region Method
+
+        /// <summary> 取得頁面所需的下拉式選單內容 </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
         private async Task GetSelectListItem(HttpClient client)
         {
             HttpResponseMessage response;
@@ -209,5 +256,7 @@ namespace NorthwindWeb.Controllers
                 ViewBag.ProductIDList = JsonConvert.DeserializeObject<List<SelectListItem>>(json);
             }
         }
+
+        #endregion Method
     }
 }
