@@ -30,6 +30,7 @@ namespace NorthwindAPI.Controllers
         {
             List<OrdersDTO> ordersDTOs = new List<OrdersDTO>();
 
+            // 取得訂單資料
             var queryData = _context.Orders
                                     .Include(o => o.Customer)
                                     .Include(o => o.Employee)
@@ -45,6 +46,7 @@ namespace NorthwindAPI.Controllers
                 queryData = queryData.Where(o => o.Customer.CompanyName == customerName);
             }
 
+            // 將查詢資料轉為 DTO
             ordersDTOs = await queryData.Select(o => new OrdersDTO
             {
                 OrderID = o.OrderID,
@@ -69,6 +71,7 @@ namespace NorthwindAPI.Controllers
         {
             OrdersDTO ordersDTO = new OrdersDTO();
 
+            // 取得單筆訂單資料
             var order = await _context.Orders
                                       .Include(o => o.Customer)
                                       .Include(o => o.Employee)
@@ -81,6 +84,7 @@ namespace NorthwindAPI.Controllers
                 return NotFound();
             }
 
+            // 將資料轉為 DTO
             ordersDTO = new OrdersDTO
             {
                 OrderID = order.OrderID,
@@ -128,6 +132,7 @@ namespace NorthwindAPI.Controllers
                 return BadRequest();
             }
 
+            // 取得單筆訂單資料
             var entity = await _context.Orders.FindAsync(orderID);
 
             if (entity == null)
@@ -135,16 +140,17 @@ namespace NorthwindAPI.Controllers
                 return NotFound();
             }
 
-            entity.ShipVia = ordersDTO.ShipVia;
-            entity.ShipName = ordersDTO.ShipName;
-            entity.ShipAddress = ordersDTO.ShipAddress;
-            entity.ShipCity = ordersDTO.ShipCity;
-            entity.ShipRegion = ordersDTO.ShipRegion;
-            entity.ShipPostalCode = ordersDTO.ShipPostalCode;
-            entity.ShipCountry = ordersDTO.ShipCountry;
-
+            // 更新訂單資料
             try
             {
+                entity.ShipVia = ordersDTO.ShipVia;
+                entity.ShipName = ordersDTO.ShipName;
+                entity.ShipAddress = ordersDTO.ShipAddress;
+                entity.ShipCity = ordersDTO.ShipCity;
+                entity.ShipRegion = ordersDTO.ShipRegion;
+                entity.ShipPostalCode = ordersDTO.ShipPostalCode;
+                entity.ShipCountry = ordersDTO.ShipCountry;
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -171,6 +177,7 @@ namespace NorthwindAPI.Controllers
         [HttpDelete("{orderID}")]
         public async Task<IActionResult> DeleteOrders(int orderID)
         {
+            // 取得訂單明細資料 List
             var Order_Details = await _context.Order_Details.Where(o => o.OrderID == orderID).ToListAsync();
 
             if (Order_Details == null)
@@ -178,8 +185,7 @@ namespace NorthwindAPI.Controllers
                 return NotFound();
             }
 
-            _context.Order_Details.RemoveRange(Order_Details);
-
+            // 取得單筆訂單資料
             var orders = await _context.Orders.FindAsync(orderID);
 
             if (orders == null)
@@ -187,8 +193,23 @@ namespace NorthwindAPI.Controllers
                 return NotFound();
             }
 
-            _context.Orders.Remove(orders);
-            await _context.SaveChangesAsync();
+            // 刪除訂單明細資料與訂單資料
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    _context.Order_Details.RemoveRange(Order_Details);
+                    _context.Orders.Remove(orders);
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
 
             return Ok();
         }
@@ -202,52 +223,62 @@ namespace NorthwindAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Orders>> PostOrders(OrdersDTO ordersDTO)
         {
-            try
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                Orders orders = new Orders()
+                try
                 {
-                    CustomerID = ordersDTO.CustomerID,
-                    EmployeeID = ordersDTO.EmployeeID,
-                    OrderDate = ordersDTO.OrderDate,
-                    RequiredDate = ordersDTO.RequiredDate,
-                    ShippedDate = ordersDTO.ShippedDate,
-                    ShipVia = ordersDTO.ShipVia,
-                    Freight = ordersDTO.Freight,
-                    ShipName = ordersDTO.ShipName,
-                    ShipAddress = ordersDTO.ShipAddress,
-                    ShipCity = ordersDTO.ShipCity,
-                    ShipRegion = ordersDTO.ShipRegion,
-                    ShipPostalCode = ordersDTO.ShipPostalCode,
-                    ShipCountry = ordersDTO.ShipCountry
-                };
+                    // 將訂單 DTO 資料轉為 EntityModel
+                    Orders orders = new Orders()
+                    {
+                        CustomerID = ordersDTO.CustomerID,
+                        EmployeeID = ordersDTO.EmployeeID,
+                        OrderDate = ordersDTO.OrderDate,
+                        RequiredDate = ordersDTO.RequiredDate,
+                        ShippedDate = ordersDTO.ShippedDate,
+                        ShipVia = ordersDTO.ShipVia,
+                        Freight = ordersDTO.Freight,
+                        ShipName = ordersDTO.ShipName,
+                        ShipAddress = ordersDTO.ShipAddress,
+                        ShipCity = ordersDTO.ShipCity,
+                        ShipRegion = ordersDTO.ShipRegion,
+                        ShipPostalCode = ordersDTO.ShipPostalCode,
+                        ShipCountry = ordersDTO.ShipCountry
+                    };
 
-                _context.Orders.Add(orders);
-                await _context.SaveChangesAsync();
+                    _context.Orders.Add(orders);
+                    await _context.SaveChangesAsync();
+                    
+                    // 將明細 DTO 資料轉為 EntityModel
+                    List<Order_Details> order_Details = ordersDTO.orderDetails.Select(o => new Order_Details()
+                    {
+                        OrderID = orders.OrderID,
+                        ProductID = o.ProductID ?? 0,
+                        UnitPrice = o.UnitPrice ?? 0,
+                        Quantity = o.Quantity ?? 0,
+                        Discount = o.Discount ?? 0
+                    }).ToList();
 
-                List<Order_Details> order_Details = ordersDTO.orderDetails.Select(o => new Order_Details()
+                    _context.Order_Details.AddRange(order_Details);
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
                 {
-                    OrderID = orders.OrderID,
-                    ProductID = o.ProductID ?? 0,
-                    UnitPrice = o.UnitPrice ?? 0,
-                    Quantity = o.Quantity ?? 0,
-                    Discount = o.Discount ?? 0
-                }).ToList();
-
-                _context.Order_Details.AddRange(order_Details);
-                await _context.SaveChangesAsync();
-
-            }
-            catch (Exception)
-            {
-                throw;
+                    await transaction.RollbackAsync();
+                    throw;
+                }
             }
 
             return Ok();
         }
 
-        private bool OrdersExists(int id)
+        /// <summary> 確認訂單是否存在 </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private bool OrdersExists(int orderID)
         {
-            return _context.Orders.Any(e => e.OrderID == id);
+            return _context.Orders.Any(e => e.OrderID == orderID);
         }
     }
 }

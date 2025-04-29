@@ -21,7 +21,7 @@ namespace NorthwindAPI.Controllers
         [HttpGet("CustomerID")]
         public async Task<List<SelectListItem>> GetCustomerID()
         {
-            List<SelectListItem> selectListItems = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "--- Please Select ---"} };
+            List<SelectListItem> selectListItems = GetBasicSelectLists();
 
             selectListItems.AddRange(await _context.Customers
                                                    .Select(o => new SelectListItem
@@ -38,7 +38,7 @@ namespace NorthwindAPI.Controllers
         [HttpGet("EmployeeID")]
         public async Task<List<SelectListItem>> GetEmployeeID()
         {
-            List<SelectListItem> selectListItems = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "--- Please Select ---" } };
+            List<SelectListItem> selectListItems = GetBasicSelectLists();
 
             selectListItems.AddRange(await _context.Employees
                                                    .Select(o => new SelectListItem
@@ -55,7 +55,7 @@ namespace NorthwindAPI.Controllers
         [HttpGet("ShipVia")]
         public async Task<List<SelectListItem>> GetShipVia()
         {
-            List<SelectListItem> selectListItems = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "--- Please Select ---" } };
+            List<SelectListItem> selectListItems = GetBasicSelectLists();
 
             selectListItems.AddRange(await _context.Shippers
                                                    .Select(o => new SelectListItem
@@ -72,7 +72,7 @@ namespace NorthwindAPI.Controllers
         [HttpGet("ProductID")]
         public async Task<List<SelectListItem>> GetProductID()
         {
-            List<SelectListItem> selectListItems = new List<SelectListItem>() { new SelectListItem { Value = "", Text = "--- Please Select ---" } };
+            List<SelectListItem> selectListItems = GetBasicSelectLists();
 
             selectListItems.AddRange(await _context.Products
                                                    .Select(o => new SelectListItem
@@ -82,6 +82,13 @@ namespace NorthwindAPI.Controllers
                                                    }).ToListAsync());
 
             return selectListItems;
+        }
+
+        /// <summary> 取得基本下拉選單設定 </summary>
+        /// <returns></returns>
+        private List<SelectListItem> GetBasicSelectLists()
+        {
+            return new List<SelectListItem>() { new SelectListItem { Value = "", Text = "--- Please Select ---" } }; ;
         }
     }
 }
